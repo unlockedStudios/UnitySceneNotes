@@ -1,0 +1,4 @@
+﻿<Solution>
+  <Project Path="SceneNotes.csproj" />
+  <Project Path="SceneNotes.Editor.csproj" />
+</Solution>
