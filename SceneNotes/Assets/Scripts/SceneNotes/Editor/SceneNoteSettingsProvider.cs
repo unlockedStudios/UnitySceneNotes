@@ -9,8 +9,7 @@ namespace SceneNotes.Editor
     /// </summary>
     public static class SceneNoteSettingsProvider
     {
-        private const string SETTINGS_FOLDER = "Assets/_GameFiles/Scripts/_BackendApplications/SceneNotes/Settings";
-        private const string SETTINGS_PATH = SETTINGS_FOLDER + "/SceneNoteSettings.asset";
+        private const string SETTINGS_FILE_NAME = "SceneNoteSettings.asset";
 
         private static SceneNoteSettings s_settings;
 
@@ -45,7 +44,7 @@ namespace SceneNotes.Editor
                 EnsureSettingsFolderExists();
                 settings = ScriptableObject.CreateInstance<SceneNoteSettings>();
                 settings.EnsureDefaults();
-                AssetDatabase.CreateAsset(settings, SETTINGS_PATH);
+                AssetDatabase.CreateAsset(settings, SettingsPath);
                 AssetDatabase.SaveAssets();
             }
 
@@ -57,7 +56,7 @@ namespace SceneNotes.Editor
 
         private static SceneNoteSettings FindExistingSettings()
         {
-            SceneNoteSettings settings = AssetDatabase.LoadAssetAtPath<SceneNoteSettings>(SETTINGS_PATH);
+            SceneNoteSettings settings = AssetDatabase.LoadAssetAtPath<SceneNoteSettings>(SettingsPath);
 
             if (settings != null)
                 return settings;
@@ -78,9 +77,11 @@ namespace SceneNotes.Editor
 
         private static void EnsureSettingsFolderExists()
         {
-            if (AssetDatabase.IsValidFolder(SETTINGS_FOLDER)) return;
+            string settingsFolder = SceneNoteAssetLocator.SettingsFolder;
 
-            string[] folderParts = SETTINGS_FOLDER.Split('/');
+            if (AssetDatabase.IsValidFolder(settingsFolder)) return;
+
+            string[] folderParts = settingsFolder.Split('/');
             string currentPath = folderParts[0];
 
             for (int i = 1; i < folderParts.Length; i++)
@@ -93,8 +94,10 @@ namespace SceneNotes.Editor
                 currentPath = nextPath;
             }
 
-            if (!Directory.Exists(SETTINGS_FOLDER))
-                Directory.CreateDirectory(SETTINGS_FOLDER);
+            if (!Directory.Exists(settingsFolder))
+                Directory.CreateDirectory(settingsFolder);
         }
+
+        private static string SettingsPath => $"{SceneNoteAssetLocator.SettingsFolder}/{SETTINGS_FILE_NAME}";
     }
 }

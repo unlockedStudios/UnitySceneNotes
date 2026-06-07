@@ -10,9 +10,6 @@ namespace SceneNotes.Editor
     internal class SceneNotesWindow : EditorWindow
     {
         private const string WINDOW_MENU = "Tools/Scene Notes/Settings";
-        private const string UXML_PATH = "Assets/_GameFiles/Scripts/_BackendApplications/SceneNotes/UIToolkit/UIDocuments/SceneNotesWindow.uxml";
-        private const string USS_PATH = "Assets/_GameFiles/Scripts/_BackendApplications/SceneNotes/UIToolkit/StyleSheets/SceneNotesWindow.uss";
-
         private VESceneNotesWindowController _controller;
 
         [MenuItem(WINDOW_MENU, false, 90)]
@@ -27,8 +24,8 @@ namespace SceneNotes.Editor
         {
             rootVisualElement.Clear();
 
-            VisualTreeAsset visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UXML_PATH);
-            StyleSheet styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(USS_PATH);
+            VisualTreeAsset visualTreeAsset = SceneNoteAssetLocator.LoadWindowVisualTree();
+            StyleSheet styleSheet = SceneNoteAssetLocator.LoadWindowStyleSheet();
 
             if (styleSheet != null)
                 rootVisualElement.styleSheets.Add(styleSheet);

@@ -1,0 +1,74 @@
+---
+agent: 'agent'
+model: Auto (copilot)
+tools: ['execute/getTerminalOutput', 'execute/runInTerminal', 'read/readFile', 'todo']
+description: Generate a pull request description for the PR template structure.
+---
+
+# create-pr-description
+
+Create a pull request description using the repository PR format.
+The Pull Request Example should be in a format that can be copied and pasted into Githubs PR.
+
+## When this command is invoked:
+
+1. **Extract ticket number from branch name:**
+	- Get current branch: `git branch --show-current`
+	- Extract `<number>-' pattern (e.g., 'Fuzzy/12345-Some-Title' -> `12345`)
+	- Convert to `VAR-12345` format for ticket reference.
+ 
+2. ** Read the PR template **
+	- Read [pull_request_template.md](../pull_request_template.md) to get the exact template structure.
+ 
+3. ** Analyze git changes **
+	- Get changed files: `git diff --name-only main...HEAD` or `git diff --name-only origin/main...HEAD`
+	- Determine which apps/libs were touched.
+	- Check for new/removed dependencies in `package.json`
+
+4. ** Generate PR description **
+	- Create a PR Description following the template structure
+	- Fill in extracted information (description, Testing Notes, etc...)
+	
+5. ** Follow these guidelines: **
+	- Be specific about root causes (e.g. "leading forward slash caused incorrect path resolution in production")
+	- Include detailed scope with file paths.
+	- Provide actioable manual verification steps with exact commands.
+	
+## Examples:
+
+# Description
+ - Explain the issue, and what the resolution is.
+ - If applicable, Notable highlights, can be called out.
+ - If applicable, Give a short very simple study guide on what the goal of these changes are, and what the Reviewer can do to understand the PR Changes.
+ - NOTE: If its code, We only care about changes under:
+		- /_GameFiles/...
+		- /_VoVAssemblies/...
+ - If its code changes anywhere else, please ignore the code changes, as its probably apart of an assetstore asset.
+ - If the asset is 
+ 
+# Related Links:
+ - For Related links put in this format: https://varadia.atlassian.net/browse/<ticket reference number> (extract from branch name, IF Applicable)
+ - If Ticket number is not inserted, simply put "Please add Reference ticket..."
+ 
+# Screenshots:
+ - If no screenshots added, please add "Please Add Screenshots or video if any..."
+
+## Callouts:
+
+1. ** Code callouts **
+ - if you have 'code' references or callouts, you can do a brief explanation, and add code comments like so:
+ 
+	```csharp
+	[my C# Code Reference]
+	```
+
+2. ** Details ** 
+ - No need to include 'change statistics' details, such as the number of files changed, insertions, deletions, etc.
+ - Keep the notes Simple.
+
+## Example Output:
+When generating a PR description, present it like this, so it can be coped as markdown:
+
+``` md
+[Your output]
+```
