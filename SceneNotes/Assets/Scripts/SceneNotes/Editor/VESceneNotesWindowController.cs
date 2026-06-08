@@ -376,7 +376,9 @@ namespace SceneNotes.Editor
 
         private static void MoveLoadedSceneNotesToDefaultSection(string sectionKey)
         {
-            SceneNote[] sceneNotes = Object.FindObjectsByType<SceneNote>(FindObjectsInactive.Include);
+            SceneNote[] sceneNotes = Object.FindObjectsByType<SceneNote>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
 
             foreach (SceneNote sceneNote in sceneNotes)
             {

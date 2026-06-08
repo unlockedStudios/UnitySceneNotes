@@ -37,9 +37,9 @@ Create a Windows runtime/player build from command line:
 
 - Confirm the file timestamps in `Builds/SceneNotesRuntime` were updated.
 - Confirm `Builds/SceneNotesRuntime/build.log` contains:
-	- `DisplayProgressNotification: Build Successful`
-	- `Build Finished, Result: Success.`
-	- `Exiting without the bug reporter. Application will terminate with return code 0`
+  - `DisplayProgressNotification: Build Successful`
+  - `Build Finished, Result: Success.`
+  - `Exiting without the bug reporter. Application will terminate with return code 0`
 
 ### Troubleshooting Notes
 

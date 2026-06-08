@@ -47,7 +47,8 @@ namespace SceneNotes.Editor
             if (!settings.ShowAllNotes) return;
 
             SceneNote[] sceneNotes = Object.FindObjectsByType<SceneNote>(
-                FindObjectsInactive.Include);
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
 
             bool hasOpenGuiBlock = false;
 
