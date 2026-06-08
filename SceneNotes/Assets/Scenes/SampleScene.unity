@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: SceneNotes::SceneNotes.SceneNote
   _isNoteEnabled: 1
-  _displayMode: 0
+  _displayMode: 1
   _noteTitle: Checkpoint
   _noteBody: You must pass through here to end the quest.
   _categoryKey: todo
