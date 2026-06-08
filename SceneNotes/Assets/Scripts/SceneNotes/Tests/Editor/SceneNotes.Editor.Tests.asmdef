@@ -1,0 +1,22 @@
+{
+    "name": "SceneNotes.Editor.Tests",
+    "rootNamespace": "SceneNotes.Editor.Tests",
+    "references": [
+        "SceneNotes",
+        "SceneNotes.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "noEngineReferences": false
+}

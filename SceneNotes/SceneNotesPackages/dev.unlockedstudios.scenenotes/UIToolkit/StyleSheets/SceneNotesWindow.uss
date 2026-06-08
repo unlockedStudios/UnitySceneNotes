@@ -1,0 +1,136 @@
+.scene-notes-window {
+  padding: 12px;
+  min-width: 340px;
+  background-color: rgb(36, 36, 36);
+}
+
+.scene-notes-window__header {
+  margin-bottom: 12px;
+}
+
+.scene-notes-window__title {
+  font-size: 17px;
+  -unity-font-style: bold;
+  color: rgb(230, 230, 230);
+}
+
+.scene-notes-window__subtitle {
+  margin-top: 3px;
+  color: rgb(170, 170, 170);
+  white-space: normal;
+}
+
+.scene-notes-window__tabs {
+  flex-grow: 1;
+}
+
+.scene-notes-window__section {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-color: rgb(68, 68, 68);
+  border-right-color: rgb(68, 68, 68);
+  border-top-color: rgb(68, 68, 68);
+  border-bottom-color: rgb(68, 68, 68);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.scene-notes-window__section-title {
+  margin-bottom: 8px;
+  -unity-font-style: bold;
+  color: rgb(220, 220, 220);
+}
+
+.scene-notes-window__row {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.scene-notes-window__dropdown {
+  flex-grow: 1;
+  margin-right: 8px;
+}
+
+.scene-notes-window__button {
+  width: 70px;
+}
+
+.scene-notes-window__wide-button {
+  margin-top: 6px;
+  height: 24px;
+}
+
+.scene-notes-window__danger-button {
+  margin-top: 6px;
+  height: 24px;
+}
+
+.scene-notes-window__field {
+  margin-bottom: 6px;
+}
+
+.scene-notes-window__editor {
+  margin-bottom: 10px;
+}
+
+.scene-notes-window__category-list {
+  margin-top: 4px;
+}
+
+.scene-notes-window__section-list {
+  margin-top: 4px;
+}
+
+.scene-notes-window__category-row {
+  flex-direction: row;
+  align-items: center;
+  min-height: 24px;
+  margin-bottom: 4px;
+}
+
+.scene-notes-window__section-row {
+  flex-direction: row;
+  align-items: center;
+  min-height: 24px;
+  margin-bottom: 4px;
+}
+
+.scene-notes-window__swatch {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.scene-notes-window__category-label {
+  flex-grow: 1;
+  color: rgb(210, 210, 210);
+}
+
+.scene-notes-window__section-label {
+  flex-grow: 1;
+  color: rgb(210, 210, 210);
+}
+
+.scene-notes-window__category-key {
+  color: rgb(145, 145, 145);
+}
+
+.scene-notes-window__section-state {
+  width: 70px;
+  color: rgb(170, 170, 170);
+}
+
+.scene-notes-window__section-key {
+  color: rgb(145, 145, 145);
+}

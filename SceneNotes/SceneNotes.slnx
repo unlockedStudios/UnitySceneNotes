@@ -1,5 +1,6 @@
 ﻿<Solution>
   <Project Path="SceneNotes.csproj" />
+  <Project Path="SceneNotes.Editor.Tests.csproj" />
   <Project Path="SceneNotes.Editor.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
 </Solution>
