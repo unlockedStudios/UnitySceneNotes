@@ -1,16 +1,12 @@
 {
     "name": "SceneNotes",
     "rootNamespace": "SceneNotes",
-    "references": [
-        "Sirenix.OdinInspector.Attributes"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
-    "precompiledReferences": [
-        "Sirenix.OdinInspector.Attributes.dll"
-    ],
+    "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],

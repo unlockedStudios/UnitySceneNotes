@@ -5,10 +5,6 @@ Scene Notes is a Unity editor tool for attaching portable annotation data to sce
 ## Prerequisites
 
 - Unity 6000.0 or newer.
-- Odin Inspector installed in the consuming Unity project.
-
-Odin Inspector is intentionally not bundled with this package. Install Odin in the project before adding Scene Notes so the
-`Sirenix.OdinInspector` assembly references can resolve.
 
 ## Installation
 
@@ -19,11 +15,16 @@ project's `Packages/manifest.json`:
 "dev.unlockedstudios.scenenotes": "file:../SceneNotes/SceneNotesPackages/dev.unlockedstudios.scenenotes"
 ```
 
-For Git installation from this repository, use Unity's package path syntax:
+For Git installation from this repository, use Unity's package path syntax. The repository contains the Unity project in
+a top-level `SceneNotes` folder, so keep that folder in the `path` value:
 
 ```json
-"dev.unlockedstudios.scenenotes": "https://github.com/UnlockedStudios/SceneNotes.git?path=/SceneNotesPackages/dev.unlockedstudios.scenenotes#v1.0.0"
+"dev.unlockedstudios.scenenotes": "https://github.com/unlockedStudios/UnitySceneNotes.git?path=/SceneNotes/SceneNotesPackages/dev.unlockedstudios.scenenotes"
 ```
+
+Use the same URL in Unity Package Manager's `Install package from git URL...` field.
+
+After installation, add the component from `Add Component > Scene Notes > Scene Note`, or search for `Scene Note`.
 
 ## Notes
 

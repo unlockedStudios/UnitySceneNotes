@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -18,45 +16,35 @@ namespace SceneNotes
     /// </remarks>
     [DisallowMultipleComponent]
     [AddComponentMenu("Scene Notes/Scene Note")]
-    [InfoBox("Portable editor note. The component stores the note; the SceneNotes editor assembly draws the hierarchy icon and Scene view block.")]
     public class SceneNote : MonoBehaviour, ISerializationCallbackReceiver
     {
-        [TitleGroup("Scene Note")]
-        [ToggleLeft]
+        [Header("Scene Note")]
         [SerializeField]
         private bool _isNoteEnabled = true;
 
-        [TitleGroup("Scene Note")]
-        [EnumToggleButtons]
         [SerializeField]
         private SceneNoteDisplayMode _displayMode = SceneNoteDisplayMode.SelectedOnly;
 
-        [TitleGroup("Content")]
-        [LabelText("Title")]
+        [Header("Content")]
         [SerializeField]
         private string _noteTitle = "Scene Note";
 
-        [TitleGroup("Content")]
-        [HideLabel]
-        [MultiLineProperty(6)]
+        [TextArea(3, 6)]
         [SerializeField]
         private string _noteBody = "";
 
-        [TitleGroup("Visuals")]
-        [ValueDropdown(nameof(GetCategoryDropdown))]
+        [Header("Visuals")]
         [SerializeField]
         private string _categoryKey = "";
 
-        [TitleGroup("Organization")]
-        [ValueDropdown(nameof(GetSectionDropdown))]
+        [Header("Organization")]
         [SerializeField]
         private string _sectionKey = "";
 
         [SerializeField, HideInInspector]
         private SceneNoteCategory _category = SceneNoteCategory.Note;
 
-        [TitleGroup("Scene Widget")]
-        [ShowIf(nameof(UsesSceneWidget))]
+        [Header("Scene Widget")]
         [SerializeField]
         private Vector3 _sceneOffset = new Vector3(0f, 1.5f, 0f);
 
@@ -122,17 +110,14 @@ namespace SceneNotes
             _isMinimized = isMinimized;
         }
 
-        [TitleGroup("Actions")]
-        [HorizontalGroup("Actions/Buttons")]
-        [Button(ButtonSizes.Medium)]
+        [ContextMenu("Reset Scene Offset")]
         private void ResetSceneOffset()
         {
             _sceneOffset = new Vector3(0f, 1.5f, 0f);
         }
 
 #if UNITY_EDITOR
-        [HorizontalGroup("Actions/Buttons")]
-        [Button(ButtonSizes.Medium)]
+        [ContextMenu("Frame In Scene View")]
         private void FrameInSceneView()
         {
             Selection.activeGameObject = gameObject;
@@ -167,68 +152,5 @@ namespace SceneNotes
             }
         }
 
-#if UNITY_EDITOR
-        private static IEnumerable<ValueDropdownItem<string>> GetCategoryDropdown()
-        {
-            SceneNoteSettings settings = LoadSettingsForInspector();
-
-            if (settings == null)
-            {
-                yield return new ValueDropdownItem<string>("Note", SceneNoteSettings.DEFAULT_CATEGORY_KEY);
-                yield break;
-            }
-
-            settings.EnsureDefaults();
-
-            foreach (SceneNoteCategoryDefinition category in settings.Categories)
-            {
-                yield return new ValueDropdownItem<string>(category.DisplayName, category.Key);
-            }
-        }
-
-        private static IEnumerable<ValueDropdownItem<string>> GetSectionDropdown()
-        {
-            SceneNoteSettings settings = LoadSettingsForInspector();
-
-            if (settings == null)
-            {
-                yield return new ValueDropdownItem<string>("Default", SceneNoteSettings.DEFAULT_SECTION_KEY);
-                yield break;
-            }
-
-            settings.EnsureDefaults();
-
-            foreach (SceneNoteSectionDefinition section in settings.Sections)
-            {
-                yield return new ValueDropdownItem<string>(section.DisplayName, section.Key);
-            }
-        }
-
-        private static SceneNoteSettings LoadSettingsForInspector()
-        {
-            string[] guids = AssetDatabase.FindAssets("t:SceneNoteSettings");
-
-            foreach (string guid in guids)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                SceneNoteSettings settings = AssetDatabase.LoadAssetAtPath<SceneNoteSettings>(path);
-
-                if (settings != null)
-                    return settings;
-            }
-
-            return null;
-        }
-#else
-        private static IEnumerable<ValueDropdownItem<string>> GetCategoryDropdown()
-        {
-            yield break;
-        }
-
-        private static IEnumerable<ValueDropdownItem<string>> GetSectionDropdown()
-        {
-            yield break;
-        }
-#endif
     }
 }

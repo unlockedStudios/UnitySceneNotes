@@ -1,6 +1,6 @@
 {
   "name": "dev.unlockedstudios.scenenotes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Scene Notes",
   "description": "Editor tooling for adding portable notes to scene and prefab objects.",
   "unity": "6000.0",
@@ -8,8 +8,7 @@
     "unlockedstudios",
     "scene-notes",
     "editor-tooling",
-    "annotations",
-    "odin-inspector"
+    "annotations"
   ],
   "author": {
     "name": "Unlocked Studios"
