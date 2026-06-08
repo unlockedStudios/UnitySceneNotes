@@ -20,6 +20,10 @@
   white-space: normal;
 }
 
+.scene-notes-window__tabs {
+  flex-grow: 1;
+}
+
 .scene-notes-window__section {
   padding: 10px;
   margin-bottom: 10px;
@@ -58,6 +62,11 @@
   width: 70px;
 }
 
+.scene-notes-window__wide-button {
+  margin-top: 6px;
+  height: 24px;
+}
+
 .scene-notes-window__danger-button {
   margin-top: 6px;
   height: 24px;
@@ -75,7 +84,18 @@
   margin-top: 4px;
 }
 
+.scene-notes-window__section-list {
+  margin-top: 4px;
+}
+
 .scene-notes-window__category-row {
+  flex-direction: row;
+  align-items: center;
+  min-height: 24px;
+  margin-bottom: 4px;
+}
+
+.scene-notes-window__section-row {
   flex-direction: row;
   align-items: center;
   min-height: 24px;
@@ -97,6 +117,20 @@
   color: rgb(210, 210, 210);
 }
 
+.scene-notes-window__section-label {
+  flex-grow: 1;
+  color: rgb(210, 210, 210);
+}
+
 .scene-notes-window__category-key {
+  color: rgb(145, 145, 145);
+}
+
+.scene-notes-window__section-state {
+  width: 70px;
+  color: rgb(170, 170, 170);
+}
+
+.scene-notes-window__section-key {
   color: rgb(145, 145, 145);
 }

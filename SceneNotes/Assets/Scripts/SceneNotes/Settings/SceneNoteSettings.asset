@@ -35,3 +35,16 @@ MonoBehaviour:
     _displayName: Landmark
     _color: {r: 0.35, g: 0.9, b: 0.55, a: 0.95}
     _isBuiltIn: 1
+  _sections:
+  - _key: default
+    _displayName: Default
+    _isEnabled: 1
+    _isBuiltIn: 1
+  - _key: custom-section
+    _displayName: FirstQuest
+    _isEnabled: 1
+    _isBuiltIn: 0
+  - _key: custom-section-2
+    _displayName: SecondQuest
+    _isEnabled: 1
+    _isBuiltIn: 0

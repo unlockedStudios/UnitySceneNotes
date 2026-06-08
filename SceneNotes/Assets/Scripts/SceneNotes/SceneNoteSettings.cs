@@ -14,11 +14,13 @@ namespace SceneNotes
     public class SceneNoteSettings : ScriptableObject
     {
         public const string DEFAULT_CATEGORY_KEY = "note";
+        public const string DEFAULT_SECTION_KEY = "default";
         public const float DEFAULT_MAX_VISIBLE_DISTANCE = 40f;
 
         [SerializeField] private bool _showAllNotes = true;
         [SerializeField] private float _maxVisibleDistance = DEFAULT_MAX_VISIBLE_DISTANCE;
         [SerializeField] private List<SceneNoteCategoryDefinition> _categories = new List<SceneNoteCategoryDefinition>();
+        [SerializeField] private List<SceneNoteSectionDefinition> _sections = new List<SceneNoteSectionDefinition>();
 
         public bool ShowAllNotes
         {
@@ -34,10 +36,20 @@ namespace SceneNotes
 
         public IReadOnlyList<SceneNoteCategoryDefinition> Categories => _categories;
 
+        public IReadOnlyList<SceneNoteSectionDefinition> Sections => _sections;
+
         public void EnsureDefaults()
         {
+            if (_categories == null)
+                _categories = new List<SceneNoteCategoryDefinition>();
+
+            if (_sections == null)
+                _sections = new List<SceneNoteSectionDefinition>();
+
             if (_maxVisibleDistance <= 0f)
                 _maxVisibleDistance = DEFAULT_MAX_VISIBLE_DISTANCE;
+
+            EnsureBuiltInSection(DEFAULT_SECTION_KEY, "Default");
 
             EnsureBuiltInCategory(DEFAULT_CATEGORY_KEY, "Note", new Color(1f, 0.82f, 0.18f, 0.95f));
             EnsureBuiltInCategory("warning", "Warning", new Color(1f, 0.68f, 0.12f, 0.95f));
@@ -46,6 +58,7 @@ namespace SceneNotes
             EnsureBuiltInCategory("landmark", "Landmark", new Color(0.35f, 0.9f, 0.55f, 0.95f));
 
             RemoveInvalidCategories();
+            RemoveInvalidSections();
         }
 
         public SceneNoteCategoryDefinition GetCategoryOrDefault(string categoryKey)
@@ -66,7 +79,7 @@ namespace SceneNotes
         public SceneNoteCategoryDefinition AddCustomCategory(string displayName)
         {
             string cleanDisplayName = string.IsNullOrWhiteSpace(displayName) ? "Custom" : displayName.Trim();
-            string key = CreateUniqueKey(cleanDisplayName);
+            string key = CreateUniqueCategoryKey(cleanDisplayName);
             var category = new SceneNoteCategoryDefinition(
                 key, cleanDisplayName, new Color(0.9f, 0.9f, 0.9f, 0.95f), false);
 
@@ -91,6 +104,79 @@ namespace SceneNotes
             return category == null ? DEFAULT_CATEGORY_KEY : category.Key;
         }
 
+        public SceneNoteSectionDefinition GetSectionOrDefault(string sectionKey)
+        {
+            SceneNoteSectionDefinition section = GetSection(sectionKey);
+            if (section != null) return section;
+
+            return GetSection(DEFAULT_SECTION_KEY);
+        }
+
+        public SceneNoteSectionDefinition GetSection(string sectionKey)
+        {
+            if (string.IsNullOrWhiteSpace(sectionKey)) return null;
+
+            return _sections.FirstOrDefault(section => section.Key == sectionKey);
+        }
+
+        public SceneNoteSectionDefinition AddCustomSection(string displayName)
+        {
+            string cleanDisplayName = string.IsNullOrWhiteSpace(displayName) ? "Custom Section" : displayName.Trim();
+            string key = CreateUniqueSectionKey(cleanDisplayName);
+            var section = new SceneNoteSectionDefinition(key, cleanDisplayName, true, false);
+
+            _sections.Add(section);
+
+            return section;
+        }
+
+        public bool RenameSection(string sectionKey, string displayName)
+        {
+            SceneNoteSectionDefinition section = GetSection(sectionKey);
+
+            if (section == null || section.IsBuiltIn) return false;
+
+            section.DisplayName = string.IsNullOrWhiteSpace(displayName)
+                ? "Custom Section"
+                : displayName.Trim();
+
+            return true;
+        }
+
+        public bool RemoveSection(string sectionKey)
+        {
+            SceneNoteSectionDefinition section = GetSection(sectionKey);
+
+            if (section == null || section.IsBuiltIn) return false;
+
+            return _sections.Remove(section);
+        }
+
+        public bool SetSectionEnabled(string sectionKey, bool isEnabled)
+        {
+            SceneNoteSectionDefinition section = GetSection(sectionKey);
+            if (section == null) return false;
+
+            section.IsEnabled = isEnabled;
+
+            return true;
+        }
+
+        public void EnableAllSections()
+        {
+            foreach (SceneNoteSectionDefinition section in _sections)
+            {
+                section.IsEnabled = true;
+            }
+        }
+
+        public string NormalizeSectionKey(string sectionKey)
+        {
+            SceneNoteSectionDefinition section = GetSectionOrDefault(sectionKey);
+
+            return section == null ? DEFAULT_SECTION_KEY : section.Key;
+        }
+
         private void EnsureBuiltInCategory(string key, string displayName, Color color)
         {
             SceneNoteCategoryDefinition category = GetCategory(key);
@@ -105,6 +191,20 @@ namespace SceneNotes
                 category.DisplayName = displayName;
         }
 
+        private void EnsureBuiltInSection(string key, string displayName)
+        {
+            SceneNoteSectionDefinition section = GetSection(key);
+
+            if (section == null)
+            {
+                _sections.Add(new SceneNoteSectionDefinition(key, displayName, true, true));
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(section.DisplayName))
+                section.DisplayName = displayName;
+        }
+
         private void RemoveInvalidCategories()
         {
             _categories.RemoveAll(category =>
@@ -113,13 +213,36 @@ namespace SceneNotes
                 string.IsNullOrWhiteSpace(category.DisplayName));
         }
 
-        private string CreateUniqueKey(string displayName)
+        private void RemoveInvalidSections()
+        {
+            _sections.RemoveAll(section =>
+                section == null ||
+                string.IsNullOrWhiteSpace(section.Key) ||
+                string.IsNullOrWhiteSpace(section.DisplayName));
+        }
+
+        private string CreateUniqueCategoryKey(string displayName)
         {
             string baseKey = CreateKey(displayName);
             string key = baseKey;
             int suffix = 2;
 
             while (GetCategory(key) != null)
+            {
+                key = $"{baseKey}-{suffix}";
+                suffix++;
+            }
+
+            return key;
+        }
+
+        private string CreateUniqueSectionKey(string displayName)
+        {
+            string baseKey = CreateKey(displayName);
+            string key = baseKey;
+            int suffix = 2;
+
+            while (GetSection(key) != null)
             {
                 key = $"{baseKey}-{suffix}";
                 suffix++;

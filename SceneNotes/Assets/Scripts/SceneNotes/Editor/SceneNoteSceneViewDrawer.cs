@@ -12,7 +12,7 @@ namespace SceneNotes.Editor
         private const float NOTE_WIDTH = 260f;
         private const float NOTE_PADDING = 10f;
         private const float TAIL_HALF_WIDTH = 11f;
-        private const float TAIL_LENGTH = 28f;
+        private const float MIN_TAIL_LENGTH = 28f;
         private const float MIN_NOTE_HEIGHT = 36f;
         private const float OUTLINE_WIDTH = 1f;
         private const float CORNER_RADIUS = 8f;
@@ -57,6 +57,15 @@ namespace SceneNotes.Editor
 
                 foreach (SceneNote sceneNote in sceneNotes)
                 {
+                    if (IsSceneNoteSelected(sceneNote)) continue;
+                    if (!ShouldDrawSceneNote(sceneNote, sceneView, settings)) continue;
+
+                    DrawSceneNote(sceneNote, sceneView, settings);
+                }
+
+                foreach (SceneNote sceneNote in sceneNotes)
+                {
+                    if (!IsSceneNoteSelected(sceneNote)) continue;
                     if (!ShouldDrawSceneNote(sceneNote, sceneView, settings)) continue;
 
                     DrawSceneNote(sceneNote, sceneView, settings);
@@ -79,6 +88,16 @@ namespace SceneNotes.Editor
             if (!sceneNote.gameObject.scene.IsValid()) return false;
             if (!sceneNote.HasContent) return false;
 
+            string sectionKey = settings.NormalizeSectionKey(sceneNote.SectionKey);
+            SceneNoteSectionDefinition section = settings.GetSectionOrDefault(sectionKey);
+            if (section == null || !section.IsEnabled) return false;
+
+            string sectionViewFilterKey = SceneNoteEditorSettings.SectionViewFilterKey;
+            bool hasSectionViewFilter = !SceneNoteEditorSettings.IsAllSectionsFilter(sectionViewFilterKey) &&
+                settings.GetSection(sectionViewFilterKey) != null;
+
+            if (hasSectionViewFilter && sectionKey != sectionViewFilterKey) return false;
+
             if (sceneView.camera == null) return true;
 
             Vector3 worldPosition = GetWorldPosition(sceneNote);
@@ -94,7 +113,7 @@ namespace SceneNotes.Editor
             SceneView sceneView,
             SceneNoteSettings settings)
         {
-            Vector3 anchorWorldPosition = sceneNote.transform.position;
+            Vector3 anchorWorldPosition = GetAnchorWorldPosition(sceneNote);
             Vector3 bubbleWorldPosition = GetWorldPosition(sceneNote);
             Vector3 anchorGuiPosition = HandleUtility.WorldToGUIPointWithDepth(anchorWorldPosition);
             Vector3 bubbleGuiPosition = HandleUtility.WorldToGUIPointWithDepth(bubbleWorldPosition);
@@ -129,8 +148,10 @@ namespace SceneNotes.Editor
                 noteWidth,
                 noteHeight);
 
+            noteRect = KeepNoteRectAboveAnchor(noteRect, anchorGuiPosition);
+
             HandleSceneNoteInput(sceneNote, noteRect);
-            DrawBubble(noteRect, noteColor);
+            DrawBubble(noteRect, noteColor, anchorGuiPosition);
 
             if (sceneNote.IsMinimized)
                 DrawMinimizedText(noteRect, headerContent, noteStyle);
@@ -140,7 +161,7 @@ namespace SceneNotes.Editor
             DrawMinimizeButton(noteRect, sceneNote.IsMinimized, noteColor);
         }
 
-        private static void DrawBubble(Rect noteRect, Color noteColor)
+        private static void DrawBubble(Rect noteRect, Color noteColor, Vector2 anchorGuiPosition)
         {
             Color backgroundColor = new Color(
                 Mathf.Lerp(0.05f, noteColor.r, 0.22f),
@@ -149,15 +170,12 @@ namespace SceneNotes.Editor
                 noteColor.a);
 
             Color outlineColor = new Color(noteColor.r, noteColor.g, noteColor.b, noteColor.a);
-            Vector2 edgePoint = new Vector2(noteRect.center.x, noteRect.yMax);
-            Vector3 tailLeft = new Vector2(edgePoint.x - TAIL_HALF_WIDTH, edgePoint.y);
-            Vector3 tailRight = new Vector2(edgePoint.x + TAIL_HALF_WIDTH, edgePoint.y);
-            Vector3 tailTip = new Vector2(edgePoint.x, edgePoint.y + TAIL_LENGTH);
+            GetTailPoints(noteRect, anchorGuiPosition, out Vector2 tailLeft, out Vector2 tailRight);
 
             Color previousHandleColor = Handles.color;
 
             Handles.color = backgroundColor;
-            Handles.DrawAAConvexPolygon(tailLeft, tailTip, tailRight);
+            Handles.DrawAAConvexPolygon(tailLeft, anchorGuiPosition, tailRight);
 
             DrawRoundedRect(noteRect, outlineColor, CORNER_RADIUS);
 
@@ -170,7 +188,7 @@ namespace SceneNotes.Editor
             DrawRoundedRect(innerRect, backgroundColor, CORNER_RADIUS - OUTLINE_WIDTH);
 
             Handles.color = outlineColor;
-            Handles.DrawAAPolyLine(OUTLINE_WIDTH, tailLeft, tailTip, tailRight);
+            Handles.DrawAAPolyLine(OUTLINE_WIDTH, tailLeft, anchorGuiPosition, tailRight);
 
             Handles.color = previousHandleColor;
         }
@@ -263,6 +281,65 @@ namespace SceneNotes.Editor
         private static Vector3 GetWorldPosition(SceneNote sceneNote)
         {
             return sceneNote.transform.position + sceneNote.SceneOffset;
+        }
+
+        private static Vector3 GetAnchorWorldPosition(SceneNote sceneNote)
+        {
+            Renderer renderer = sceneNote.GetComponentInChildren<Renderer>(true);
+
+            if (renderer != null)
+                return GetBoundsTopCenter(renderer.bounds);
+
+            Collider collider = sceneNote.GetComponentInChildren<Collider>(true);
+
+            if (collider != null)
+                return GetBoundsTopCenter(collider.bounds);
+
+            return sceneNote.transform.position;
+        }
+
+        private static Vector3 GetBoundsTopCenter(Bounds bounds)
+        {
+            return new Vector3(bounds.center.x, bounds.max.y, bounds.center.z);
+        }
+
+        private static bool IsSceneNoteSelected(SceneNote sceneNote)
+        {
+            if (sceneNote == null) return false;
+
+            Object[] selectedObjects = Selection.objects;
+
+            foreach (Object selectedObject in selectedObjects)
+            {
+                if (selectedObject == sceneNote || selectedObject == sceneNote.gameObject)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void GetTailPoints(Rect noteRect, Vector2 anchorGuiPosition, out Vector2 tailLeft, out Vector2 tailRight)
+        {
+            float tailCenterX = Mathf.Clamp(
+                anchorGuiPosition.x,
+                noteRect.xMin + TAIL_HALF_WIDTH,
+                noteRect.xMax - TAIL_HALF_WIDTH);
+            Vector2 tailCenter = new Vector2(tailCenterX, noteRect.yMax);
+
+            tailLeft = new Vector2(tailCenter.x - TAIL_HALF_WIDTH, tailCenter.y);
+            tailRight = new Vector2(tailCenter.x + TAIL_HALF_WIDTH, tailCenter.y);
+        }
+
+        private static Rect KeepNoteRectAboveAnchor(Rect noteRect, Vector2 anchorGuiPosition)
+        {
+            float maximumBottomY = anchorGuiPosition.y - MIN_TAIL_LENGTH;
+
+            if (noteRect.yMax <= maximumBottomY)
+                return noteRect;
+
+            noteRect.y = maximumBottomY - noteRect.height;
+
+            return noteRect;
         }
 
         private static void DrawRoundedRect(Rect rect, Color color, float radius)

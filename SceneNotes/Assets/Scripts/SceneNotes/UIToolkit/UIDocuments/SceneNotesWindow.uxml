@@ -5,26 +5,54 @@
       <ui:Label text="Shared editor settings for note categories and Scene view visibility." class="scene-notes-window__subtitle" />
     </ui:VisualElement>
 
-    <ui:VisualElement class="scene-notes-window__section">
-      <ui:Label text="Visibility" class="scene-notes-window__section-title" />
-      <ui:Toggle name="show-all-notes-toggle" label="Show All Notes" class="scene-notes-window__field" />
-      <ui:FloatField name="max-visible-distance-field" label="Max Visible Distance" class="scene-notes-window__field" />
-    </ui:VisualElement>
+    <ui:TabView name="scene-notes-tabs" class="scene-notes-window__tabs">
+      <ui:Tab name="settings-tab" label="Settings">
+        <ui:VisualElement class="scene-notes-window__section">
+          <ui:Label text="Visibility" class="scene-notes-window__section-title" />
+          <ui:Toggle name="show-all-notes-toggle" label="Show All Notes" class="scene-notes-window__field" />
+          <ui:FloatField name="max-visible-distance-field" label="Max Visible Distance" class="scene-notes-window__field" />
+        </ui:VisualElement>
 
-    <ui:VisualElement class="scene-notes-window__section">
-      <ui:Label text="Categories" class="scene-notes-window__section-title" />
-      <ui:VisualElement class="scene-notes-window__row">
-        <ui:DropdownField name="category-dropdown" label="Category" class="scene-notes-window__dropdown" />
-        <ui:Button name="add-category-button" text="Add" class="scene-notes-window__button" />
-      </ui:VisualElement>
+        <ui:VisualElement class="scene-notes-window__section">
+          <ui:Label text="Categories" class="scene-notes-window__section-title" />
+          <ui:VisualElement class="scene-notes-window__row">
+            <ui:DropdownField name="category-dropdown" label="Category" class="scene-notes-window__dropdown" />
+            <ui:Button name="add-category-button" text="Add" class="scene-notes-window__button" />
+          </ui:VisualElement>
 
-      <ui:VisualElement class="scene-notes-window__editor">
-        <ui:TextField name="category-name-field" label="Name" class="scene-notes-window__field" />
-        <uie:ColorField name="category-color-field" label="Color" show-alpha="true" class="scene-notes-window__field" />
-        <ui:Button name="remove-category-button" text="Remove Category" class="scene-notes-window__danger-button" />
-      </ui:VisualElement>
+          <ui:VisualElement class="scene-notes-window__editor">
+            <ui:TextField name="category-name-field" label="Name" class="scene-notes-window__field" />
+            <uie:ColorField name="category-color-field" label="Color" show-alpha="true" class="scene-notes-window__field" />
+            <ui:Button name="remove-category-button" text="Remove Category" class="scene-notes-window__danger-button" />
+          </ui:VisualElement>
 
-      <ui:VisualElement name="category-list" class="scene-notes-window__category-list" />
-    </ui:VisualElement>
+          <ui:VisualElement name="category-list" class="scene-notes-window__category-list" />
+        </ui:VisualElement>
+      </ui:Tab>
+
+      <ui:Tab name="sections-tab" label="Sections">
+        <ui:VisualElement class="scene-notes-window__section">
+          <ui:Label text="Section View" class="scene-notes-window__section-title" />
+          <ui:DropdownField name="section-view-dropdown" label="View" class="scene-notes-window__field" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="scene-notes-window__section">
+          <ui:Label text="Sections" class="scene-notes-window__section-title" />
+          <ui:VisualElement class="scene-notes-window__row">
+            <ui:DropdownField name="section-dropdown" label="Section" class="scene-notes-window__dropdown" />
+            <ui:Button name="add-section-button" text="Add" class="scene-notes-window__button" />
+          </ui:VisualElement>
+
+          <ui:VisualElement class="scene-notes-window__editor">
+            <ui:Toggle name="section-enabled-toggle" label="Enabled" class="scene-notes-window__field" />
+            <ui:TextField name="section-name-field" label="Name" class="scene-notes-window__field" />
+            <ui:Button name="enable-all-sections-button" text="Enable All Sections" class="scene-notes-window__wide-button" />
+            <ui:Button name="remove-section-button" text="Delete Section" class="scene-notes-window__danger-button" />
+          </ui:VisualElement>
+
+          <ui:VisualElement name="section-list" class="scene-notes-window__section-list" />
+        </ui:VisualElement>
+      </ui:Tab>
+    </ui:TabView>
   </ui:VisualElement>
 </ui:UXML>

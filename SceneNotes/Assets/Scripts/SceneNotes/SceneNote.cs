@@ -47,6 +47,11 @@ namespace SceneNotes
         [SerializeField]
         private string _categoryKey = "";
 
+        [TitleGroup("Organization")]
+        [ValueDropdown(nameof(GetSectionDropdown))]
+        [SerializeField]
+        private string _sectionKey = "";
+
         [SerializeField, HideInInspector]
         private SceneNoteCategory _category = SceneNoteCategory.Note;
 
@@ -69,6 +74,10 @@ namespace SceneNotes
         public string CategoryKey => string.IsNullOrWhiteSpace(_categoryKey)
             ? SceneNoteSettings.DEFAULT_CATEGORY_KEY
             : _categoryKey;
+
+        public string SectionKey => string.IsNullOrWhiteSpace(_sectionKey)
+            ? SceneNoteSettings.DEFAULT_SECTION_KEY
+            : _sectionKey;
 
         public Vector3 SceneOffset => _sceneOffset;
 
@@ -99,6 +108,13 @@ namespace SceneNotes
         public void SetNoteEnabled(bool isEnabled)
         {
             _isNoteEnabled = isEnabled;
+        }
+
+        public void SetSectionKey(string sectionKey)
+        {
+            _sectionKey = string.IsNullOrWhiteSpace(sectionKey)
+                ? SceneNoteSettings.DEFAULT_SECTION_KEY
+                : sectionKey;
         }
 
         public void SetMinimized(bool isMinimized)
@@ -167,6 +183,24 @@ namespace SceneNotes
             foreach (SceneNoteCategoryDefinition category in settings.Categories)
             {
                 yield return new ValueDropdownItem<string>(category.DisplayName, category.Key);
+            }
+        }
+
+        private static IEnumerable<ValueDropdownItem<string>> GetSectionDropdown()
+        {
+            SceneNoteSettings settings = LoadSettingsForInspector();
+
+            if (settings == null)
+            {
+                yield return new ValueDropdownItem<string>("Default", SceneNoteSettings.DEFAULT_SECTION_KEY);
+                yield break;
+            }
+
+            settings.EnsureDefaults();
+
+            foreach (SceneNoteSectionDefinition section in settings.Sections)
+            {
+                yield return new ValueDropdownItem<string>(section.DisplayName, section.Key);
             }
         }
 
