@@ -5,8 +5,10 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
+# /[Bb]uild/
+/[Bb]uilds/*
+!/[Bb]uilds/SceneNotesRuntime/
+!/[Bb]uilds/SceneNotesRuntime/**
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
@@ -70,6 +72,11 @@ sysinfo.txt
 *.unitypackage*
 *.app
 *.ahbuildinfo
+/[Bb]uilds/**/*.log
+/[Bb]uilds/**/unity-stdout.txt
+/[Bb]uilds/**/unity-stderr.txt
+/[Bb]uilds/**/*_BurstDebugInformation_DoNotShip/
+/[Bb]uilds/**/*_BurstDebugInformation_DoNotShip/**
 
 # Crashlytics generated file
 crashlytics-build.properties

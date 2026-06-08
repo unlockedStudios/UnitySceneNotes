@@ -219,6 +219,16 @@ namespace SceneNotes
 
             return null;
         }
+#else
+        private static IEnumerable<ValueDropdownItem<string>> GetCategoryDropdown()
+        {
+            yield break;
+        }
+
+        private static IEnumerable<ValueDropdownItem<string>> GetSectionDropdown()
+        {
+            yield break;
+        }
 #endif
     }
 }

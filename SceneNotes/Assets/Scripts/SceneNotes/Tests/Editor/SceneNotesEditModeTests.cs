@@ -145,7 +145,7 @@ namespace SceneNotes.Editor.Tests
             List<SceneNote> drawableNotes = GetDrawableSceneNotesInDrawOrder();
 
             Assert.That(drawableNotes, Has.Count.EqualTo(7));
-            Assert.That(drawableNotes.Any(sceneNote => sceneNote == _sceneNotes[0]), Is.False);
+            Assert.That(drawableNotes.Any(sceneNote => ReferenceEquals(sceneNote, _sceneNotes[0])), Is.False);
         }
 
         [Test]
@@ -156,13 +156,39 @@ namespace SceneNotes.Editor.Tests
             List<SceneNote> drawableNotes = GetDrawableSceneNotesInDrawOrder();
 
             Assert.That(drawableNotes, Has.Count.EqualTo(7));
-            Assert.That(drawableNotes.Any(sceneNote => sceneNote == _sceneNotes[0]), Is.False);
+            Assert.That(drawableNotes.Any(sceneNote => ReferenceEquals(sceneNote, _sceneNotes[0])), Is.False);
+        }
+
+        [Test]
+        public void ClickingOpenSceneNoteHeaderSelectsGameObject()
+        {
+            InvokeSceneNoteInput(_sceneNotes[0], new Vector2(112f, 112f));
+
+            Assert.That(Selection.activeGameObject, Is.SameAs(_gameObjects[0]));
+            Assert.That(_sceneNotes[0].IsMinimized, Is.False);
+        }
+
+        [Test]
+        public void ClickingSceneNoteMinimizeButtonStillTogglesMinimizedState()
+        {
+            InvokeSceneNoteInput(_sceneNotes[0], new Vector2(348f, 112f));
+
+            Assert.That(_sceneNotes[0].IsMinimized, Is.True);
+            Assert.That(Selection.activeGameObject, Is.Null);
+        }
+
+        [Test]
+        public void ClickingOpenSceneNoteBodyDoesNotSelectGameObject()
+        {
+            InvokeSceneNoteInput(_sceneNotes[0], new Vector2(112f, 145f));
+
+            Assert.That(Selection.activeGameObject, Is.Null);
+            Assert.That(_sceneNotes[0].IsMinimized, Is.False);
         }
 
         private List<SceneNote> GetDrawableSceneNotesInDrawOrder()
         {
-            Type drawerType = typeof(VESceneNotesWindowController).Assembly.GetType(
-                "SceneNotes.Editor.SceneNoteSceneViewDrawer");
+            Type drawerType = GetSceneViewDrawerType();
             MethodInfo methodInfo = drawerType.GetMethod(
                 "GetDrawableSceneNotesInDrawOrder",
                 BindingFlags.NonPublic | BindingFlags.Static);
@@ -170,6 +196,39 @@ namespace SceneNotes.Editor.Tests
             return ((IEnumerable<SceneNote>)methodInfo.Invoke(
                 null,
                 new object[] { _sceneNotes.ToArray(), null, _settings })).ToList();
+        }
+
+        private static void InvokeSceneNoteInput(SceneNote sceneNote, Vector2 mousePosition)
+        {
+            Type drawerType = GetSceneViewDrawerType();
+            MethodInfo methodInfo = drawerType.GetMethod(
+                "HandleSceneNoteInput",
+                BindingFlags.NonPublic | BindingFlags.Static);
+
+            Rect noteRect = new Rect(100f, 100f, 260f, 100f);
+            float headerHeight = 18f;
+            Event previousEvent = Event.current;
+            Event.current = new Event
+            {
+                type = EventType.MouseDown,
+                button = 0,
+                mousePosition = mousePosition
+            };
+
+            try
+            {
+                methodInfo.Invoke(null, new object[] { sceneNote, noteRect, headerHeight });
+            }
+            finally
+            {
+                Event.current = previousEvent;
+            }
+        }
+
+        private static Type GetSceneViewDrawerType()
+        {
+            return typeof(VESceneNotesWindowController).Assembly.GetType(
+                "SceneNotes.Editor.SceneNoteSceneViewDrawer");
         }
 
         private VESceneNotesWindowController CreateController()

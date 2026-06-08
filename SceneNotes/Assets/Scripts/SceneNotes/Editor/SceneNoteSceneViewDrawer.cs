@@ -166,7 +166,7 @@ namespace SceneNotes.Editor
 
             noteRect = KeepNoteRectAboveAnchor(noteRect, anchorGuiPosition);
 
-            HandleSceneNoteInput(sceneNote, noteRect);
+            HandleSceneNoteInput(sceneNote, noteRect, headerHeight);
             DrawBubble(noteRect, noteColor, anchorGuiPosition);
 
             if (sceneNote.IsMinimized)
@@ -209,21 +209,30 @@ namespace SceneNotes.Editor
             Handles.color = previousHandleColor;
         }
 
-        private static void HandleSceneNoteInput(SceneNote sceneNote, Rect noteRect)
+        private static void HandleSceneNoteInput(SceneNote sceneNote, Rect noteRect, float headerHeight)
         {
             Event currentEvent = Event.current;
             if (currentEvent.type != EventType.MouseDown) return;
             if (currentEvent.button != 0) return;
 
-            Rect targetRect = sceneNote.IsMinimized
-                ? noteRect
-                : GetMinimizeButtonRect(noteRect);
+            Rect minimizeButtonRect = GetMinimizeButtonRect(noteRect);
 
-            if (!targetRect.Contains(currentEvent.mousePosition)) return;
+            if (minimizeButtonRect.Contains(currentEvent.mousePosition))
+            {
+                Undo.RecordObject(sceneNote, sceneNote.IsMinimized ? "Expand Scene Note" : "Minimize Scene Note");
+                sceneNote.SetMinimized(!sceneNote.IsMinimized);
+                EditorUtility.SetDirty(sceneNote);
+                SceneView.RepaintAll();
+                currentEvent.Use();
+                return;
+            }
 
-            Undo.RecordObject(sceneNote, sceneNote.IsMinimized ? "Expand Scene Note" : "Minimize Scene Note");
-            sceneNote.SetMinimized(!sceneNote.IsMinimized);
-            EditorUtility.SetDirty(sceneNote);
+            Rect headerRect = GetHeaderRect(noteRect, sceneNote.IsMinimized, headerHeight);
+            if (!headerRect.Contains(currentEvent.mousePosition)) return;
+
+            Selection.activeGameObject = sceneNote.gameObject;
+            EditorGUIUtility.PingObject(sceneNote.gameObject);
+            EditorApplication.RepaintHierarchyWindow();
             SceneView.RepaintAll();
             currentEvent.Use();
         }
@@ -292,6 +301,24 @@ namespace SceneNotes.Editor
                 noteRect.y + MINIMIZE_BUTTON_INSET,
                 MINIMIZE_BUTTON_SIZE,
                 MINIMIZE_BUTTON_SIZE);
+        }
+
+        private static Rect GetHeaderRect(Rect noteRect, bool isMinimized, float headerHeight)
+        {
+            if (isMinimized)
+            {
+                return new Rect(
+                    noteRect.x + NOTE_PADDING,
+                    noteRect.y + NOTE_PADDING * 0.5f,
+                    noteRect.width - NOTE_PADDING * 2f - MINIMIZE_BUTTON_SIZE,
+                    noteRect.height - NOTE_PADDING);
+            }
+
+            return new Rect(
+                noteRect.x + NOTE_PADDING,
+                noteRect.y + NOTE_PADDING,
+                noteRect.width - NOTE_PADDING * 2f,
+                headerHeight);
         }
 
         private static Vector3 GetWorldPosition(SceneNote sceneNote)
